@@ -43,10 +43,10 @@ data_date_shorts = pd.read_csv(path_shorts)["Date"].tolist()
 data_date_longs = pd.read_csv(path_longs)["Date"].tolist()
 
 with open(path_closing_prices + "\\Temp_Shorts.csv", 'w', newline='') as f:
-	try:
-		thewriter = csv.writer(f, dialect='excel')
-		thewriter.writerow(["Date"] + data_date_shorts)
-		for ticker in tickers_shorts[0:2]:
+	thewriter = csv.writer(f, dialect='excel')
+	thewriter.writerow(["Date"] + data_date_shorts)
+	for ticker in tickers_shorts:
+		try:
 			path = path_closing_prices + "\\" + ticker + ".csv"
 
 			historical_data = pdr.get_data_yahoo(ticker, start="2013-09-30", end="2018-09-30")
@@ -59,19 +59,18 @@ with open(path_closing_prices + "\\Temp_Shorts.csv", 'w', newline='') as f:
 			data_close = pd.read_csv(path)["Close"].tolist()
 
 			thewriter.writerow([ticker] + data_close)
-	except ValueError:
-		pass
-temp = pd.read_csv(path_closing_prices + "\\Temp_Shorts.csv", index_col=0)
-temp_transpose = temp.transpose()
-temp_transpose=temp_transpose.to_csv()
+		except ValueError:
+			pass
+temp = pd.read_csv(path_closing_prices + "\\Temp_Shorts.csv", index_col=0,error_bad_lines=False)
+temp_transpose = temp.transpose().to_csv()
 csv_transpose = open(path_closing_prices + "\\Short Closing Prices.csv", "w")
 csv_transpose.write(temp_transpose)
 csv_transpose.close()
 with open(path_closing_prices + "\\Temp_Longs.csv", 'w', newline='') as f:
-	try:
-		thewriter = csv.writer(f, dialect='excel')
-		thewriter.writerow(["Date"] + data_date_longs)
-		for ticker in tickers_longs[0:2]:
+	thewriter = csv.writer(f, dialect='excel')
+	thewriter.writerow(["Date"] + data_date_longs)
+	for ticker in tickers_longs:
+		try:
 			path = path_closing_prices + "\\" + ticker + ".csv"
 
 			historical_data = pdr.get_data_yahoo(ticker, start="2013-09-30", end="2018-09-30")
@@ -84,9 +83,9 @@ with open(path_closing_prices + "\\Temp_Longs.csv", 'w', newline='') as f:
 			data_close = pd.read_csv(path)["Close"].tolist()
 
 			thewriter.writerow([ticker] + data_close)
-	except ValueError:
-		pass
-temp = pd.read_csv(path_closing_prices + "\\Temp_Longs.csv", index_col=0)
+		except ValueError:
+			pass
+temp = pd.read_csv(path_closing_prices + "\\Temp_Longs.csv", index_col=0, error_bad_lines=False)
 temp_transpose = temp.transpose().to_csv()
 csv_transpose = open(path_closing_prices + "\\Long Closing Prices.csv", "w")
 csv_transpose.write(temp_transpose)
