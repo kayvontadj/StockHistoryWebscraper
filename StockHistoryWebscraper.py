@@ -30,10 +30,15 @@ def writetoCSV(path, data):
 yf.pdr_override()
 
 desired_value = input("Which value would you like to view: \nOpen	\nHigh	\nLow	\nClose	\nAdj Close \nVolume\n")
+desired_value = desired_value.replace(' ','').title()
 possible_values = ["open", "high", "low", "close", "adjclose", "volume"]
+
 while desired_value.replace(' ', '').lower() not in possible_values:
 	print("Choose one of the given values\n")
 	desired_value = input("Which value would you like to view: \nOpen	\nHigh	\nLow	\nClose	\nAdj Close \nVolume\n")
+
+start_date = input("Choose a starting date in the form YYYY-MM-DD\n")
+end_date = input("Choose an end date in the form YYYY-MM-DD\n")
 
 path_values = os.environ["HOMEPATH"] + "\\Desktop\\Stock Data" 
 
@@ -46,7 +51,7 @@ tickers = getTickers("StockList.xlsx", column = 0)
 
 ticker_path = path_values + "\\" + tickers[0] + ".csv"
 
-historical_data = pdr.get_data_yahoo(tickers[0], start="2013-09-30", end="2018-09-30").to_csv()
+historical_data = pdr.get_data_yahoo(tickers[0], start=start_date, end=end_date).to_csv()
 
 writetoCSV(ticker_path, historical_data)
 
@@ -60,12 +65,10 @@ with open(path_values + "\\Temp.csv", 'w', newline='') as f:
 		try:
 			path = path_values + "\\" + ticker + ".csv"
 
-			historical_data = pdr.get_data_yahoo(ticker, start="2013-09-30", end="2018-09-30").to_csv()
-			csv = open(path, "w")
-			csv.write(historical_data)
-			csv.close()
+			historical_data = pdr.get_data_yahoo(ticker, start=start_date, end=end_date).to_csv()
+			writetoCSV(path, historical_data)
 
-			values = pd.read_csv(path)[desired_value.title()].tolist()
+			values = pd.read_csv(path)[desired_value].tolist()
 
 			thewriter.writerow([ticker] + values)
 		except ValueError:
@@ -73,6 +76,6 @@ with open(path_values + "\\Temp.csv", 'w', newline='') as f:
 temp = pd.read_csv(path_values + "\\Temp.csv", index_col=0,error_bad_lines=False)
 temp_transpose = temp.transpose().to_csv()
 os.remove(path_values + "\\Temp.csv")
-csv_transpose = open(path_values + "\\" + desired_value.title() + ".csv", "w")
+csv_transpose = open(path_values + "\\" + desired_value + ".csv", "w")
 csv_transpose.write(temp_transpose)
 csv_transpose.close()
