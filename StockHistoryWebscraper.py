@@ -121,7 +121,7 @@ dates = pd.read_csv(ticker_path)["Date"].tolist()
 with open(path_values + "\\Temp.csv", 'w', newline='') as f:
 	thewriter = csv.writer(f, dialect='excel')
 	thewriter.writerow(["Date"] + dates)
-	for ticker in tickers[0:2]:
+	for ticker in tickers[0:len(tickers)]:
 		try:
 			path = path_values + "\\" + ticker + ".csv"
 
